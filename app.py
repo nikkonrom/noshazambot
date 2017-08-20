@@ -13,7 +13,7 @@ bot = telebot.TeleBot(config.bot_token)
 
 server = Flask(__name__)
 
-@bot.message_handler(commands=['game'])
+@bot.message_handler(commands=['track'])
 def game(message):
     # Подключаемся к БД
     db_worker = SQLighter(config.music_database_name)
@@ -49,6 +49,12 @@ def check_answer(message):
         utils.finish_user_game(message.chat.id)
 
 
+@bot.message_handler(commands=['start'])
+def start_guess(message):
+    db_worker = SQLighter(config.users_database_name)
+
+
+
 @server.route("/bot", methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
@@ -57,7 +63,7 @@ def getMessage():
 @server.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url="https://{}/bot".format(config.domain_name))
+    #bot.set_webhook(url="https://{}/bot".format(config.domain_name))
     return "!", 200
 
 if __name__ == "__main__":
