@@ -1,8 +1,10 @@
 import telebot
 import os
 from flask import Flask, request
+import config
 
-bot = telebot.TeleBot('433775421:AAEoA4JPXt40BJgBmK7uCrE8X58MUtqgraU')
+
+bot = telebot.TeleBot(config.bot_token)
 
 server = Flask(__name__)
 
@@ -22,7 +24,7 @@ def getMessage():
 @server.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url="https://noshazambot.herokuapp.com/bot")
+    bot.set_webhook(url="https://{}/bot".format(config.domain_name))
     return "!", 200
 
 if __name__ == "__main__":
