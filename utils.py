@@ -2,7 +2,7 @@
 import shelve
 import time
 from SQLighter import SQLighter
-from config import shelve_name, database_name
+from config import shelve_name, music_database_name
 from random import shuffle
 from telebot import types
 
@@ -13,7 +13,7 @@ def count_rows():
     Данный метод считает общее количество строк в базе данных и сохраняет в хранилище.
     Потом из этого количества будем выбирать музыку.
     """
-    db = SQLighter(database_name)
+    db = SQLighter(music_database_name)
     rowsnum = db.count_rows()
     with shelve.open(shelve_name) as storage:
         storage['rows_count'] = rowsnum
