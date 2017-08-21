@@ -6,6 +6,7 @@ import time
 import utils
 import random
 from SQLighter import SQLighter
+from SQLUsers import SQLUsers
 from telebot import types
 
 
