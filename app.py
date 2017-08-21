@@ -47,7 +47,7 @@ def check_answer(message):
             if elapsed_time < 21:
                 bonus_score = (21 - elapsed_time)*10
             score = config.right_score + bonus_score            
-            bot.send_message(message.chat.id, 'Верно! Вы получили {} очков, бонус за скорость: {}'.format(str(score), str(bonus_score)), reply_markup=markup_keyboard)
+            bot.send_message(message.chat.id, 'Верно! Вы получили {} очков, бонус за скорость: {}'.format(str(score.round()), str(bonus_score.round())), reply_markup=markup_keyboard)
             db_worker = SQLUsers(config.users_database_name)
             db_worker.edit_score(message.chat.id, score)
             db_worker.close()
