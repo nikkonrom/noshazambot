@@ -10,7 +10,7 @@ class SQLUsers:
 
     def check_user(self, chat_id):
         with self.connection:
-            return self.cursor.execute('SELECT count(user_id)>0 FROM table WHERE id = {}'.format(chat_id)).fetchall()
+            return self.cursor.execute('SELECT count(user_id)>0 FROM users WHERE user_id = {}'.format(chat_id)).fetchall()
 
 
     def write_user(self, chat_id):
@@ -19,5 +19,9 @@ class SQLUsers:
     
     def edit_score(self, chat_id, score):
         with self.connection:
-            self.cursor.execute('UPDATE music SET score = score + {} WHERE user_id = {}', str(score), str(chat_id))
+            self.cursor.execute('UPDATE users SET score = score + {} WHERE user_id = {}'.format(str(score), str(chat_id)))
     
+    def close(self):
+        """ Закрываем текущее соединение с БД """
+        self.connection.commit()
+        self.connection.close()

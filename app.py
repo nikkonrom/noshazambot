@@ -36,22 +36,39 @@ def check_answer(message):
     # Как Вы помните, answer может быть либо текст, либо None
     # Если None:
     if not answer:
-        bot.send_message(message.chat.id, 'Чтобы начать игру, выберите команду /game')
+        bot.send_message(message.chat.id, 'Чтобы начать игру, выберите команду /track')
     else:
-        # Уберем клавиатуру с вариантами ответа.
-        keyboard_hider = types.ReplyKeyboardRemove()
+        markup_keyboard = utils.generate_main_markup()
         # Если ответ правильный/неправильный
-        if message.text == answer:
-            bot.send_message(message.chat.id, 'Верно!', reply_markup=keyboard_hider)
+        if message.text == answer[0]:
+            elapsed_time = time.time() - answer[1]
+            bonus_score = 0
+            if elapsed_time < 21:
+                bonus_score = (21 - elapsed_time)*10
+            score = config.right_score + bonus_score            
+            bot.send_message(message.chat.id, 'Верно! Вы получили {} очков, бонус за скорость: {}'.format(str(score), str(bonus_score)), reply_markup=markup_keyboard)
+            db_worker = SQLUsers(config.users_database_name)
+            db_worker.edit_score(message.chat.id, score)
+            db_worker.close()
         else:
-            bot.send_message(message.chat.id, 'Увы, Вы не угадали. Попробуйте ещё раз!', reply_markup=keyboard_hider)
+            bot.send_message(message.chat.id, 'Увы, Вы не угадали. Попробуйте ещё раз!', reply_markup=markup_keyboard)
+
         # Удаляем юзера из хранилища (игра закончена)
         utils.finish_user_game(message.chat.id)
 
 
 @bot.message_handler(commands=['start'])
 def start_guess(message):
-    db_worker = SQLighter(config.users_database_name)
+    db_worker = SQLUsers(config.users_database_name)
+    state = db_worker.check_user(message.chat.id)
+    if state[0][0]:
+        pass
+    else:
+        db_worker.write_user(message.chat.id)
+        
+    db_worker.close()
+    markup_keyboard = utils.generate_main_markup()
+    message = bot.send_message(message.chat.id, 'Начать игру - /track\nТаблица лидеров - /leaderboad', reply_markup = markup_keyboard)
 
 
 
@@ -63,7 +80,7 @@ def getMessage():
 @server.route("/")
 def webhook():
     bot.remove_webhook()
-    #bot.set_webhook(url="https://{}/bot".format(config.domain_name))
+    bot.set_webhook(url="https://{}/bot".format(config.domain_name))
     return "!", 200
 
 if __name__ == "__main__":
