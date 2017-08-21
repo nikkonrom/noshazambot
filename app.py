@@ -54,7 +54,6 @@ def check_answer(message):
         else:
             bot.send_message(message.chat.id, 'Увы, Вы не угадали. Попробуйте ещё раз!', reply_markup=markup_keyboard)
 
-        # Удаляем юзера из хранилища (игра закончена)
         utils.finish_user_game(message.chat.id)
 
 
@@ -69,7 +68,7 @@ def start_guess(message):
         
     db_worker.close()
     markup_keyboard = utils.generate_main_markup()
-    message = bot.send_message(message.chat.id, 'Начать игру - /track\nТаблица лидеров - /leaderboad', reply_markup = markup_keyboard)
+    bot.send_message(message.chat.id, 'Начать игру - /track\nТаблица лидеров - /leaderboad', reply_markup = markup_keyboard)
 
 
 
