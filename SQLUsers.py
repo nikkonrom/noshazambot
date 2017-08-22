@@ -29,9 +29,9 @@ class SQLUsers:
     
     def get_top_players(self):
         with self.connection:
-            self.cursor.execute('SELECT * FROM users ORDER BY score DESC LIMIT 3').fetchall()
+            return self.cursor.execute('SELECT * FROM users ORDER BY score DESC LIMIT 3').fetchall()
     
 
     def get_current_player_position(self, user_id):
         with self.connection:
-            self.cursor.execute('SELECT (SELECT COUNT(*) FROM users AS _t2 WHERE _t2.score>=_t1.score) AS pos,user_id,score FROM users AS _t1 WHERE user_id=?',(user_id,)).fetchall()
+            return self.cursor.execute('SELECT (SELECT COUNT(*) FROM users AS _t2 WHERE _t2.score>=_t1.score) AS pos,user_id,score FROM users AS _t1 WHERE user_id=?',(user_id,)).fetchall()
