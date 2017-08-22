@@ -34,4 +34,4 @@ class SQLUsers:
 
     def get_current_player_position(self, user_id):
         with self.connection:
-            self.cursor.execute('SELECT row_number() over (ORDER BY score DESC) num, score FROM users WHERE user_id = ?',user_id).fetchall()
+            self.cursor.execute('SELECT row_number() over (ORDER BY score DESC) num, score FROM users WHERE user_id = %s',user_id).fetchall()
