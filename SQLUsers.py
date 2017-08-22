@@ -29,7 +29,7 @@ class SQLUsers:
     
     def get_top_players(self):
         with self.connection:
-            self.cursor.execute('SELECT * FROM users ORDERBY score DESC LIMIT 3').fetchall()
+            self.cursor.execute('SELECT * FROM users ORDER BY score DESC LIMIT 3').fetchall()
     
 
     def get_current_player_position(self, user_id):

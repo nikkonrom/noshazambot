@@ -67,7 +67,7 @@ def get_answer_for_user(chat_id):
 def generate_main_markup():
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=False, resize_keyboard=True)
     markup.row('/track')
-    markup.row('/leaderboars', '/level')
+    markup.row('/leaderboard', '/level')
     return markup
 
 def generate_markup(right_answer, wrong_answers):
