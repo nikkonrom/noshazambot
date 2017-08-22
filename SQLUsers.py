@@ -10,16 +10,16 @@ class SQLUsers:
 
     def check_user(self, user_id):
         with self.connection:
-            return self.cursor.execute('SELECT count(user_id)>0 FROM users WHERE user_id = {}'.format(user_id)).fetchall()
+            return self.cursor.execute('SELECT count(user_id)>0 FROM users WHERE user_id = ?', (user_id)).fetchall()
 
 
     def write_user(self, user_id):
         with self.connection:
-            self.cursor.execute('INSERT into users (user_id, score) values ({}, {})'.format(str(user_id), str(0)))
+            self.cursor.execute('INSERT into users (user_id, score) values (?, ?)', (user_id, 0))
     
     def edit_score(self, user_id, score):
         with self.connection:
-            self.cursor.execute('UPDATE users SET score = score + {} WHERE user_id = {}'.format(str(score), str(user_id)))
+            self.cursor.execute('UPDATE users SET score = score + ? WHERE user_id = ?', (score, user_id))
     
     def close(self):
         """ Закрываем текущее соединение с БД """
@@ -34,4 +34,4 @@ class SQLUsers:
 
     def get_current_player_position(self, user_id):
         with self.connection:
-            self.cursor.execute('SELECT row_number() over (ORDER BY score DESC) num, score FROM users WHERE user_id = {}'.format(str(user_id))).fetchall()
+            self.cursor.execute('SELECT row_number() over (ORDER BY score DESC) num, score FROM users WHERE user_id = ?',user_id).fetchall()
