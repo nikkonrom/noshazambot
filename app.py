@@ -29,6 +29,52 @@ def game(message):
     # Отсоединяемся от БД
     db_worker.close()
 
+@bot.message_handler(commands=['start'])
+def start_guess(message):
+    db_worker = SQLUsers(config.users_database_name)
+    state = db_worker.check_user(message.from_user.first_name + ' ' + message.from_user.last_name)
+    if state[0][0]:
+        pass
+    else:
+        db_worker.write_user(message.from_user.first_name + ' ' + message.from_user.last_name)
+        
+    db_worker.close()
+    markup_keyboard = utils.generate_main_markup()
+    bot.send_message(message.chat.id, 'Начать игру - /track\nТаблица лидеров - /leaderboard', reply_markup = markup_keyboard)
+
+@bot.message_handler(commands=['leaderboard'])
+def send_leaderboard(message):
+    db_worker = SQLUsers(config.users_database_name)
+    top_players = db_worker.get_top_players()
+    current_player = db_worker.get_current_player_position(message.from_user.first_name + ' ' + message.from_user.last_name)[0]
+    db_worker.close()
+
+    ladder_exists = 0
+    text = []
+    counter = 1
+    
+
+    for item in top_players:
+        text.append(str(counter) + '. ' + item[0] + ' — ' + str(item[1]))
+        counter += 1
+        if item[0] == current_player[1]:
+            ladder_exists = 1   
+    max
+    
+    if ladder_exists:
+        message_text ='Congrats!\n' + '\n'.join(text)
+    else:
+        player_line = str(current_player[0]) + '. ' + current_player[1] + ' — ' + str(current_player[2])
+        text.append(player_line)
+        max_len = max(map(len, text))
+        text.remove(text[3])
+        message_text = '\n'.join(text) + '\n' + '. '*max_len + '\n' + player_line
+    
+    bot.send_message(message.chat.id, message_text)
+
+
+    
+
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def check_answer(message):
@@ -49,28 +95,12 @@ def check_answer(message):
             score = config.right_score + bonus_score            
             bot.send_message(message.chat.id, 'Верно! Вы получили {} очков, бонус за скорость: {}'.format(str(score.round()), str(bonus_score.round())), reply_markup=markup_keyboard)
             db_worker = SQLUsers(config.users_database_name)
-            db_worker.edit_score(message.chat.id, score)
+            db_worker.edit_score(message.from_user.first_name + ' ' + message.from_user.last_name, score)
             db_worker.close()
         else:
             bot.send_message(message.chat.id, 'Увы, Вы не угадали. Попробуйте ещё раз!', reply_markup=markup_keyboard)
 
         utils.finish_user_game(message.chat.id)
-
-
-@bot.message_handler(commands=['start'])
-def start_guess(message):
-    db_worker = SQLUsers(config.users_database_name)
-    state = db_worker.check_user(message.chat.id)
-    if state[0][0]:
-        pass
-    else:
-        db_worker.write_user(message.chat.id)
-        
-    db_worker.close()
-    markup_keyboard = utils.generate_main_markup()
-    bot.send_message(message.chat.id, 'Начать игру - /track\nТаблица лидеров - /leaderboad', reply_markup = markup_keyboard)
-
-
 
 @server.route("/bot", methods=['POST'])
 def getMessage():
