@@ -55,7 +55,7 @@ def send_leaderboard(message):
     
 
     for item in top_players:
-        text.append(str(counter) + '. ' + item[0] + ' — ' + str(item[1]))
+        text.append(str(counter) + '. ' + item[0] + ' — ' + str(round(item[1], 1)))
         counter += 1
         if item[0] == current_player[1]:
             ladder_exists = 1   
@@ -64,7 +64,7 @@ def send_leaderboard(message):
     if ladder_exists:
         message_text ='Congrats!\n' + '\n'.join(text)
     else:
-        player_line = str(current_player[0]) + '. ' + current_player[1] + ' — ' + str(current_player[2])
+        player_line = str(current_player[0]) + '. ' + current_player[1] + ' — ' + str(round(current_player[2],1))
         text.append(player_line)
         max_len = max(map(len, text))
         text.remove(text[3])
@@ -93,7 +93,7 @@ def check_answer(message):
             if elapsed_time < 21:
                 bonus_score = (21 - elapsed_time)*10
             score = config.right_score + bonus_score            
-            bot.send_message(message.chat.id, 'Верно! Вы получили {} очков, бонус за скорость: {}'.format(str(round(score)), str(round(bonus_score))), reply_markup=markup_keyboard)
+            bot.send_message(message.chat.id, 'Верно! Вы получили {} очков (бонус за скорость: {})'.format(str(round(score)), str(round(bonus_score))), reply_markup=markup_keyboard)
             db_worker = SQLUsers(config.users_database_name)
             db_worker.edit_score(message.from_user.first_name + ' ' + message.from_user.last_name, score)
             db_worker.close()
