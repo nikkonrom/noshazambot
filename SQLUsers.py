@@ -10,7 +10,7 @@ class SQLUsers:
 
     def check_user(self, user_id):
         with self.connection:
-            return self.cursor.execute('SELECT count(user_id)>0 FROM users WHERE user_id = ?', user_id).fetchall()
+            return self.cursor.execute('SELECT count(user_id)>0 FROM users WHERE user_id = ?', (user_id,).fetchall()
 
 
     def write_user(self, user_id):
@@ -34,4 +34,4 @@ class SQLUsers:
 
     def get_current_player_position(self, user_id):
         with self.connection:
-            self.cursor.execute('SELECT row_number() over (ORDER BY score DESC) num, score FROM users WHERE user_id = ?',user_id).fetchall()
+            self.cursor.execute('SELECT row_number() over (ORDER BY score DESC) num, score FROM users WHERE user_id = ?',(user_id,)).fetchall()
