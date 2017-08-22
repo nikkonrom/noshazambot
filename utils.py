@@ -2,7 +2,7 @@
 import shelve
 import time
 from SQLighter import SQLighter
-from config import shelve_name, database_name
+from config import shelve_name, music_database_name
 from random import shuffle
 from telebot import types
 
@@ -13,7 +13,7 @@ def count_rows():
     Данный метод считает общее количество строк в базе данных и сохраняет в хранилище.
     Потом из этого количества будем выбирать музыку.
     """
-    db = SQLighter(database_name)
+    db = SQLighter(music_database_name)
     rowsnum = db.count_rows()
     with shelve.open(shelve_name) as storage:
         storage['rows_count'] = rowsnum
@@ -67,7 +67,7 @@ def get_answer_for_user(chat_id):
 def generate_main_markup():
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=False, resize_keyboard=True)
     markup.row('/track')
-    markup.row('/leaderboard', '/level')
+    markup.row('/leaderboars', '/level')
     return markup
 
 def generate_markup(right_answer, wrong_answers):
