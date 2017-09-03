@@ -15,7 +15,7 @@ class SQLUsers:
 
     def write_user(self, user_id):
         with self.connection:
-            self.cursor.execute('INSERT into users (user_id, score, rate) values (?, ?)', (user_id, 0))
+            self.cursor.execute('INSERT into users (user_id, score, win, lose) values (?, ?, ?, ?)', (user_id, 0, 0, 0))
     
     def edit_score(self, user_id, score):
         with self.connection:
