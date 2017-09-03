@@ -15,12 +15,23 @@ class SQLUsers:
 
     def write_user(self, user_id):
         with self.connection:
-            self.cursor.execute('INSERT into users (user_id, score) values (?, ?)', (user_id, 0))
+            self.cursor.execute('INSERT into users (user_id, score, rate) values (?, ?)', (user_id, 0))
     
     def edit_score(self, user_id, score):
         with self.connection:
             self.cursor.execute('UPDATE users SET score = score + ? WHERE user_id = ?', (score, user_id))
+
+    def edit_winrate(self, user_id):
+        with self.connection:
+            self.cursor.execute('UPDATE users SET win = win + 1 WHERE user id = ?', (user_id, ))
     
+    def edit_loserate(self, user_id):
+        with self.connection:
+            self.cursor.execute('UPDATE users SET lose = lose + 1 WHERE user id = ?', (user_id, ))
+    
+    def get_(self, parameter_list):
+        pass
+
     def close(self):
         """ Закрываем текущее соединение с БД """
         self.connection.commit()

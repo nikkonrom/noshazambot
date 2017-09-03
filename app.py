@@ -31,23 +31,23 @@ def game(message):
 
 @bot.message_handler(commands=['start'])
 def start_guess(message):
-    db_worker = SQLUsers(config.users_database_name)
-    state = db_worker.check_user(message.from_user.first_name + ' ' + message.from_user.last_name)
+    db_users_worker = SQLUsers(config.users_database_name)
+    state = db_users_worker.check_user(message.from_user.first_name + ' ' + message.from_user.last_name)
     if state[0][0]:
         pass
     else:
-        db_worker.write_user(message.from_user.first_name + ' ' + message.from_user.last_name)
+        db_users_worker.write_user(message.from_user.first_name + ' ' + message.from_user.last_name)
         
-    db_worker.close()
+    db_users_worker.close()
     markup_keyboard = utils.generate_main_markup()
     bot.send_message(message.chat.id, 'Начать игру - /track\nТаблица лидеров - /leaderboard', reply_markup = markup_keyboard)
 
 @bot.message_handler(commands=['leaderboard'])
 def send_leaderboard(message):
-    db_worker = SQLUsers(config.users_database_name)
-    top_players = db_worker.get_top_players()
-    current_player = db_worker.get_current_player_position(message.from_user.first_name + ' ' + message.from_user.last_name)[0]
-    db_worker.close()
+    db_users_worker = SQLUsers(config.users_database_name)
+    top_players = db_users_worker.get_top_players()
+    current_player = db_users_worker.get_current_player_position(message.from_user.first_name + ' ' + message.from_user.last_name)[0]
+    db_users_worker.close()
 
     ladder_exists = 0
     text = []
@@ -78,6 +78,7 @@ def send_leaderboard(message):
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def check_answer(message):
+    username = message.from_user.first_name + ' ' + message.from_user.last_name
     # Если функция возвращает None -> Человек не в игре
     answer = utils.get_answer_for_user(message.chat.id)
     # Как Вы помните, answer может быть либо текст, либо None
@@ -85,6 +86,7 @@ def check_answer(message):
     if not answer:
         bot.send_message(message.chat.id, 'Чтобы начать игру, выберите команду /track')
     else:
+        db_users_worker = SQLUsers(config.users_database_name)
         markup_keyboard = utils.generate_main_markup()
         # Если ответ правильный/неправильный
         if message.text == answer[0]:
@@ -94,12 +96,13 @@ def check_answer(message):
                 bonus_score = (21 - elapsed_time)
             score = config.right_score + bonus_score            
             bot.send_message(message.chat.id, 'Верно! Вы получили {} очков (бонус за скорость: {})'.format(str(round(score)), str(round(bonus_score))), reply_markup=markup_keyboard)
-            db_worker = SQLUsers(config.users_database_name)
-            db_worker.edit_score(message.from_user.first_name + ' ' + message.from_user.last_name, score)
-            db_worker.close()
+            db_users_worker.edit_winrate(username)
+            db_users_worker.edit_score(username, score)
+            db_users_worker.close()
         else:
+            db_users_worker.edit_loserate(username)
             bot.send_message(message.chat.id, 'Увы, Вы не угадали. Попробуйте ещё раз!', reply_markup=markup_keyboard)
-
+        db_users_worker.close()
         utils.finish_user_game(message.chat.id)
 
 @server.route("/bot", methods=['POST'])
