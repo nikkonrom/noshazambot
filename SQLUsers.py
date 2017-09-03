@@ -29,7 +29,7 @@ class SQLUsers:
         with self.connection:
             self.cursor.execute('UPDATE users SET lose = lose + 1 WHERE user_id = ?', (user_id, ))
     
-    def get_(self, parameter_list):
+    def get_winrate(self, user_id):
         pass
 
     def close(self):
