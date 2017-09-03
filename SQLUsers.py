@@ -23,11 +23,11 @@ class SQLUsers:
 
     def edit_winrate(self, user_id):
         with self.connection:
-            self.cursor.execute('UPDATE users SET win = win + 1 WHERE user id = ?', (user_id, ))
+            self.cursor.execute('UPDATE users SET win = win + 1 WHERE user_id = ?', (user_id, ))
     
     def edit_loserate(self, user_id):
         with self.connection:
-            self.cursor.execute('UPDATE users SET lose = lose + 1 WHERE user id = ?', (user_id, ))
+            self.cursor.execute('UPDATE users SET lose = lose + 1 WHERE user_id = ?', (user_id, ))
     
     def get_(self, parameter_list):
         pass
