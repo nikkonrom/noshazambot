@@ -30,7 +30,9 @@ class SQLUsers:
             self.cursor.execute('UPDATE users SET lose = lose + 1 WHERE user_id = ?', (user_id, ))
     
     def get_winrate(self, user_id):
-        pass
+        with self.connection:
+            query = self.cursor.execute('SELECT win, lose FROM users WHERE user_id = ?', (user_id, )).fetchall()
+            return (query[0] + query[1])/query[0] * 100
 
     def close(self):
         """ Закрываем текущее соединение с БД """

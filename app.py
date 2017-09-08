@@ -98,7 +98,6 @@ def check_answer(message):
             bot.send_message(message.chat.id, 'Верно! Вы получили {} очков (бонус за скорость: {})'.format(str(round(score)), str(round(bonus_score))), reply_markup=markup_keyboard)
             db_users_worker.edit_winrate(username)
             db_users_worker.edit_score(username, score)
-            db_users_worker.close()
         else:
             db_users_worker.edit_loserate(username)
             bot.send_message(message.chat.id, 'Увы, Вы не угадали. Попробуйте ещё раз!', reply_markup=markup_keyboard)
